@@ -1,0 +1,292 @@
+# -*- coding: cp936 -*-
+
+from datetime import date
+import re
+import os
+import time
+import socket
+import urlparse
+import random
+import string
+try:
+    import subprocess
+except ImportError:
+    subprocess = None  # subprocess not available on Python/Jython < 2.5
+
+__version__ = '0.1'
+
+
+class _ElementKeywords():
+
+    def __init__(self):
+        self._counter = 0
+        pass
+
+    def count(self):
+        """<p>÷–Œƒ≤‚ ‘</p>
+        """
+        self._counter += 1
+        return self._counter
+
+    def clear_counter(self):
+        """clear counter has only a short documentation"""
+        self._counter = 0
+    def gen_nums(self,counts):
+        """Get random number string.
+        Example:
+        | @{a}= | gen nums | 4 |
+        It will return 4 random number. like '2624','1456'.
+        """
+
+        li = string.digits
+        s = ''
+        for n in range(0,int(counts)) :
+            s += li[random.randint(0,len(li)-1)]
+        return s
+    def gen_chars(self,counts,upper='M'):
+        """Get random character string.
+        upper=U, will get all upper chars.
+        upper=L, will get all lower chars.
+        upper=M, will get mixed upper and lower chars.
+        Example:
+        | @{a}= | gen chars | 4 | U |
+        It will return 4 random number. like 'ABCS','FDWW'.
+        """
+        s = ''
+        #print string.ascii_letters
+        if upper.upper() == 'U':
+            li = string.ascii_uppercase
+            lenli = len(li)
+            for n in range(0,int(counts)):
+                s += li[random.randint(0,lenli-1)]
+        elif upper.upper() == 'L':
+            li = string.ascii_lowercase
+            lenli = len(li)
+            for n in range(0,int(counts)):
+                s += li[random.randint(0,lenli-1)]
+        elif upper.upper() == 'M':
+            li = string.ascii_letters
+            lenli = len(li)
+            for n in range(0,int(counts)):
+                s += li[random.randint(0,lenli-1)]
+        else :
+            pass
+        return s
+    def gen_birthday(self,maxAge=55,minAge=21,sep=''):
+        """Get random birthday.
+        Example:
+        | @{a}= | gen birthday | 4 | 0 | - |
+        It will return random age in 0-4 years old birthday.
+        like '20100302','20120123'.
+        If sep is not null, such as '-', it will return '2010-03-02'
+        """
+        now = date.today()
+        #print now
+        birth = now.year - int(minAge)
+        #print birth
+        mon      = ['1','2','3','4','5','6','7','8','9','10','11','12']
+        mon_days = ['31','28','31','30','31','30','31','31','30','31','30','31']
+        s =''
+        age = int(maxAge)-int(minAge)
+        #print 'age'+str(age)
+        y = str(birth - random.randint(1,age))
+        #print 'y'+str(y)
+        index1 = random.randint(0,11)
+        #print 'index1:'+str(index1)
+        m = str(mon[index1])
+        m = m.zfill(2)
+        maxDay = int(mon_days[index1])
+        d = str(random.randint(1,maxDay))
+        d = d.zfill(2)
+        s = y + sep + m + sep + d
+        return s
+    def gen_idcard(self,idcard='',maxAge=55,minAge=21):
+        """Get idcard No.
+        Example:
+        | @{a}= | gen idcard | 123 |
+        It will return random idcard.
+        like '111110198101010231','111110198402010231'.
+        If the lenth of idcard in (15,17,18),
+            it will return 18-idcard No
+        Else
+            it will return random 18-idcard No (21<age<55)
+        """
+        idlen=len(idcard)
+        ic=str(idcard)
+        if idlen==17 :
+            pass
+        elif idlen==15 :
+            ic=ic[0:6]+'19'+ic[6:15]
+        elif idlen==18 :
+            pass
+        else :
+            ic=self.gen_nums(6)+self.gen_birthday(int(maxAge),int(minAge),'')+self.gen_nums(3)
+            #print ic
+        ic = ic[0:17]
+        lid = list(ic)
+        temp = 0
+        for nn in range(2,19):
+            #print 'nn:'+str(nn)
+            a=int(lid[18-nn])
+            w= (2**(nn-1)) % 11
+            #print 'w:'+str(w)
+            temp+=a*w
+            #print temp
+        temp = (12-temp % 11) % 11 
+        if temp >=0 and temp <=9 :
+            ic+=str(temp)
+        elif temp ==10 :
+            ic+='X'
+        return ic
+
+    #∂®“Â—È÷§∫Ø ˝
+    def verify_idcard(self,idcard):
+        """verify 18-idcard.
+        Example:
+        | @{a}= | verify birthday | 111110198101010231 |
+        It will return true or false for the idcard.
+        """
+        #print idcard
+        #»®÷ÿ ˝◊È
+        iW = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
+        #…Ì∑›÷§∫≈¬Î÷–ø…ƒ‹µƒ◊÷∑˚
+        values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'x']
+        # π”√’˝‘Ú±Ì¥Ô ΩºÏ≤‚
+        icre = re.compile('^[1-9][0-9]{16}[x0-9]$', re.IGNORECASE);
+        m = icre.match(idcard);
+        if m:
+            pass; 
+        else:
+            #≤ª «∫œ∑®µƒ…Ì∑›÷§∫≈¬Î£¨÷±Ω”ÕÀ≥ˆ
+            return unicode('≤ª «∫œ∑®µƒ…Ì∑›÷§∫≈¬Î','gbk');
+ 
+        S = 0;
+        for i in range(0,17):
+            S += int(idcard[i]) * iW[i];
+ 
+        chk_val = (12 - (S % 11)) % 11;
+        return idcard[17].lower() == values[chk_val];
+
+    def _lapd_str(self,strings,lens,char):
+        tlen=len(strings)
+        s = ''
+        if tlen<lens :
+            for n in range(1,lens-tlen):
+                s+=char
+            s+=strings
+        else :
+            s=strings
+        return s
+
+    def _Unicode(self):
+        val = random.randint(0x4E00, 0x9FBF)
+        return unichr(val)
+
+    def gen_name(self,num=3):
+        """gen_name gen chinese name.
+        Example:
+        | @{a}= | gen name | 3 |
+        It will return chinese name.
+        """        
+        #–’ œ¡–±Ì
+        li_name =[u'’‘',u'«Æ',u'ÀÔ',u'¿Ó',u'÷‹',u'Œ‚',u'÷£',u'Õı',u'∑Î',u'≥¬',u'Ò“',u'ΩØ',
+									u'…Ú',u'∫´',u'—Ó',u'”»',u'–Ì',u'∫Œ',u'¬¿',u' ©',u'’≈',u'ø◊',u'≤‹',u'—œ',
+									u'÷Ï',u'«ÿ',u'ª™',u'Ω',u'Œ∫',u'Ã’',u'Ω™',u'∆›',u'–ª',u'◊ﬁ',u'”˜',u'∞ÿ',
+									u'ÀÆ',u'Òº',u'’¬',u'‘∆',u'À’',u'≈À',u'∏',u'ﬁ…',u'∑∂',u'≈Ì',u'¿…',u'¬≥',
+									u'Œ§',u'≤˝',u'¬Ì',u'√Á',u'∑Ô',u'ª®',u'∑Ω',u'”·',u'»Œ',u'‘¨',u'¡¯',u'€∫',
+									u'±´',u' ∑',u'Ã∆',u'∑—',u'¡Æ',u'·Ø',u'—¶',u'¿◊',u'∫ÿ',u'ƒﬂ',u'Ã¿',u'Î¯',
+									u'“Û',u'¬ﬁ',u'±œ',u'∫¬',u'⁄˘',u'∞≤',u'≥£',u'¿÷',u'”⁄',u' ±',u'∏µ',u'∆§',
+									u'±Â',u'∆Î',u'øµ',u'ŒÈ',u'”‡',u'‘™',u'≤∑',u'πÀ',u'√œ',u'∆Ω',u'ª∆',u'∫Õ',
+									u'ƒ¬',u'œÙ',u'“¸',u'“¶',u'…€',u'ø∞',u'ÕÙ',u'∆Ó',u'√´',u'”Ì',u'µ“',u'√◊',
+									u'±¥',u'√˜',u'Í∞',u'º∆',u'∑¸',u'≥…',u'¥˜',u'Ã∏',u'ÀŒ',u'√©',u'≈”',u'–‹',
+									u'ºÕ',u' Ê',u'«¸',u'œÓ',u'◊£',u'∂≠',u'¡∫',u'∂≈',u'»Ó',u'¿∂',u'„…',u'œØ',
+									u'ºæ',u'¬È',u'«ø',u'º÷',u'¬∑',u'¬¶',u'Œ£',u'Ω≠',u'ÕØ',u'—’',u'π˘',u'√∑',
+									u' ¢',u'¡÷',u'µÛ',u'÷”',u'–Ï',u'«Ò',u'¬Ê',u'∏ﬂ',u'œƒ',u'≤Ã',u'ÃÔ',u'∑Æ',
+									u'∫˙',u'¡Ë',u'ªÙ',u'”›',u'ÕÚ',u'÷ß',u'ø¬',u'æÃ',u'π‹',u'¬¨',u'ƒ™',u'æ≠',
+									u'∑ø',u'Ù√',u'Á—',u'∏…',u'Ω‚',u'”¶',u'◊⁄',u'∂°',u'–˚',u'Í⁄',u'µÀ',u'”Ù',
+									u'µ•',u'∫º',u'∫È',u'∞¸',u'÷Ó',u'◊Û',u' Ø',u'¥ﬁ',u'º™',u'≈•',u'π®',u'ª›',
+									u'≥Ã',u'Ô˙',u'–œ',u'ª¨',u'≈·',u'¬Ω',u'»Ÿ',u'ŒÃ',u'‹˜',u'—Ú',u'Ï∂',u'’Á',
+									u'Œ∫',u'º“',u'∑‚',u'‹«',u'Ù‡',u'¥¢',u'Ω˘',u'º≥',u'⁄˚',u'√”',u'À…',u'æÆ',
+									u'∂Œ',u'∏ª',u'Œ◊',u'Œ⁄',u'Ωπ',u'∞Õ',u'π≠',u'ƒ¡',u'⁄Û',u'…Ω',u'π»',u'≥µ',
+									u'∫Ó',u'Âµ',u'≈Ó',u'»´',u'€≠',u'∞‡',u'—ˆ',u'«Ô',u'÷Ÿ',u'“¡',u'π¨',u'ƒ˛',
+									u'≥',u'ËÔ',u'±©',u'∏ ',u'Ó◊',u'¿˜',u'»÷',u'◊Ê',u'Œ‰',u'∑˚',u'¡ı',u'æ∞',
+									u'’≤',u' ¯',u'¡˙',u'Œ¿',u'“∂',u'–“',u'Àæ',u'…ÿ',u'€¨',u'¿Ë',u'ºª',u'±°',
+									u'”°',u'Àﬁ',u'∞◊',u'ª≥',u'∆—',u'Ã®',u'¥”',u'∂ı',u'À˜',u'œÃ',u'ºÆ',u'¿µ',
+									u'◊ø',u'›˛',u'Õ¿',u'√…',u'≥ÿ',u'««',u'“ı',u'”Ù',u'Ò„',u'ƒ‹',u'≤‘',u'À´',
+									u'Œ≈',u'›∑',u'µ≥',u'µ‘',u'Ã∑',u'π±',u'¿Õ',u'ÂÃ',u'ºß',u'…Í',u'∑ˆ',u'∂¬',
+									u'»Ω',u'‘◊',u'€™',u'”∫',u'»¥',u'Ë≥',u'…£',u'π',u'Âß',u'≈£',u' Ÿ',u'Õ®',
+									u'±ﬂ',u'ÏË',u'—‡',u'ºΩ',u'€£',u'∆÷',u'…–',u'≈©',u'Œ¬',u'±',u'◊Ø',u'ÍÃ',
+									u'≤Ò',u'ˆƒ',u'—÷',u'≥‰',u'ƒΩ',u'¡¨',u'»„',u'œ∞',u'ª¬',u'∞¨',u'”„',u'»›',
+									u'œÚ',u'π≈',u'“◊',u'…˜',u'∏Í',u'¡Œ',u'∏˝',u'÷’',u'Ùﬂ',u'æ”',u'∫‚',u'≤Ω',
+									u'∂º',u'π¢',u'¬˙',u'∫Î',u'øÔ',u'π˙',u'Œƒ',u'ø‹',u'π„',u'¬ª',u'„⁄',u'∂´',
+									u'≈π',u'ÏØ',u'Œ÷',u'¿˚',u'Œµ',u'‘Ω',u'ŸÁ',u'¬°',u'¿‰',u'ˆ§',u'–¡',u'„€',
+									u' ¶',u'πÆ',u'ÿ«',u'ƒÙ',u'ÍÀ',u'π¥',u'∞Ω',u'»⁄',u'ƒ«',u'ºÚ',u'»ƒ',u'ø’',
+									u'‘¯',u'Œ„',u'…≥',u'ÿø',u'—¯',u'æœ',u'–Î',u'∑·',u'≥≤',u'πÿ',u'ÿ·',u'œ‡',
+									u'≤È',u'∫Û',u'æ£',u'∫Ï',u'”Œ',u'Û√',u'»®',u'Â÷',u'∏«',u'··',u'ª∏',u'π´',
+									u'ÕÚ',u'Ÿπ',u'Àæ¬Ì',u'…œπŸ',u'≈∑—Ù',u'œƒ∫Ó',u'÷Ó∏',u'Œ≈»À',u'∂´∑Ω',u'∫’¡¨',u'ª ∏¶',u'Œæ≥Ÿ',
+									u'π´—Ú',u'Â£Ã®',u'π´',u'“±',u'◊⁄',u'’˛',u'Âß',u'—Ù',u'¥æ”⁄',u'µ•”⁄',u'Ã´ Â',u'…Í',
+									u'Õ¿',u'π´ÀÔ',u'÷ŸÀÔ',u'–˘‘Ø',u'¡Ó∫¸',u'÷”¿Î',u'”ÓŒƒ',u'≥§ÀÔ',u'ƒΩ»›',u'œ ”⁄',u'„Ã«',u'ÀæÕΩ',
+									u'Àæø’',u'ÿ¡πŸ',u'Àæø‹',u'ÿÎ∂Ω',u'◊”≥µ',u'ÚßÀÔ',u'∂Àƒæ',u'Œ◊',u'¬Ì',u'π´Œ˜',u'∆·µÒ',u'¿÷’˝',
+									u'»¿Ê·',u'π´¡º',u'Õÿº–',u'π»‘◊',u'∏∏π»',u'¡ª',u'Ω˙',u'≥˛',u'„∆',u'∑®',u'»Í',
+									u'€≥',u'Õø',u'«’',u'∂Œ',u'∏…',u'∞Ÿ¿Ô',u'∂´π˘',u'ƒœ√≈',u'∫Ù—”',u'πÈ∫£',u'—Ú…‡',u'Œ¢…˙',
+									u'‘¿',u'Àß',u'Á√ø∫',u'øˆ',u'∫Û',u'”–«Ÿ',u'¡∫',u'«',u'◊Û«',u'∂´√≈',u'Œ˜√≈',u'…Ã',
+									u'ƒ≤',u'Ÿ‹',u'Ÿ¶≤Æ',u'…Õ',u'ƒœπ¨',u'ƒ´π˛',u'⁄€ÛŒ',u'ƒÍ',u'∞Æ',u'—Ù',u'Ÿ°']
+        ln = len(li_name)
+        last_name= li_name[random.randint(0,ln-1)]
+        #print last_name
+        first_name =''
+        for n in range(0,int(num)-len(last_name)):
+            first_name += self._GB2312()
+            #print first_name
+        return last_name + first_name
+
+    #@ÀÊª˙…˙≥…∫∫◊÷
+    def _GB2312(self):
+        
+        str1 = self._hex()
+        #print 'str1:'+str1
+        #print str1.decode('hex')
+        try :
+            str2 =str1.decode('hex').decode('gb2312')
+        except UnicodeDecodeError:
+            #≥ˆœ÷¥ÌŒÛµƒ ±∫Ú÷ÿ–¬…˙≥…“ª∏ˆ∫∫◊÷
+            str1 = self._hex()
+            try :
+                str2 =str1.decode('hex').decode('gb2312')
+                #print '22222' + str2
+            except UnicodeDecodeError:
+                #ÕÚ“ªRP∫‹≤Óªπ «±®¥Ì£¨ƒ«æÕ÷∏∂®“ª∏ˆ∫∫◊÷À„¡À
+                str2 = u'∞≤'
+        return str2
+    
+    def _hex(self):
+        head = random.randint(0xB0, 0xCF)
+        body = random.randint(0xA, 0xF)
+        if body == 0xF :
+            tail = random.randint(0, 0xE)
+        else :
+            tail = random.randint(0, 0xF)
+        val = ( head << 8 ) | (body << 4) | tail
+        str1 = "%x" % val
+        return str1
+
+if __name__ == "__main__":
+    #’‚ «“ª∏ˆ≤‚ ‘”√µƒΩ≈±æ£¨ø…“‘÷±Ω”‘À––∏√Œƒº˛—È÷§–¬‘ˆµƒ∫Ø ˝
+    #u=_ElementKeywords().Unicode()
+    #print u
+    #x=_ElementKeywords()._GB2312()
+    #print x
+    for n in range(0,100):
+        na=_ElementKeywords().gen_name(4)
+        print na
+    """a=_ElementKeywords().gen_birthday('23','21','-')
+    print 'a:'+a
+    b=_ElementKeywords().gen_idcard('')
+    print 'b:'+b
+    c=_ElementKeywords().verify_idcard(b)
+    print 'c:'+str(c)
+    d=_ElementKeywords().gen_nums(5)
+    print 'd:'+d
+    e=_ElementKeywords().gen_chars(6)
+    print 'e:'+e"""
+
