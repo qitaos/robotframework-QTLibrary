@@ -14,7 +14,7 @@ class QTLibrary( _ElementKeywords ):
     ROBOT_LIBRARY_VERSION = __version__
 
     def __init__(self):
-        """QTLibrary can be imported. By Jacky Qi
+        """QTLibrary can be imported. By Jacky Qi 
         """
         for base in QTLibrary.__bases__:
             base.__init__(self)
