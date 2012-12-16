@@ -13,7 +13,7 @@ try:
 except ImportError:
     subprocess = None  # subprocess not available on Python/Jython < 2.5
 
-__version__ = '0.1'
+__version__ = '0.10'
 
 
 class _ElementKeywords():
