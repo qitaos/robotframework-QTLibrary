@@ -1,5 +1,7 @@
 # -*- coding: cp936 -*-
+#encoding=utf-8
 
+import datetime
 from datetime import date
 import re
 import os
@@ -8,6 +10,8 @@ import socket
 import urlparse
 import random
 import string
+import codecs
+import sys
 try:
     import subprocess
 except ImportError:
@@ -20,10 +24,19 @@ class _ElementKeywords():
 
     def __init__(self):
         self._counter = 0
+        """self._element_finder = ElementFinder()"""
         pass
+    # Public, element lookups
 
     def count(self):
-        """<p>中文测试</p>
+        """Simulates moving mouse away from the element specified by `locator`.
+        Key attributes for arbitrary elements are `id` and `name`. See
+        `introduction` for details about locating elements.
+
+        | test | test2 |
+        Example:
+        | Execute JavaScript | window.my_js_function('arg1', 'arg2') |
+        | Execute JavaScript | ${CURDIR}/js_to_execute.js |
         """
         self._counter += 1
         return self._counter
@@ -269,9 +282,51 @@ class _ElementKeywords():
         val = ( head << 8 ) | (body << 4) | tail
         str1 = "%x" % val
         return str1
+    
+    def create_pboc(self, new_name,new_id,filepath):
+        """Create Pboc
+        You can create a normal credit file by using this keyword.
+        Example:
+        Create Pboc| Pingan | 252461196308226269|${CURDIR}
+        It will create a credit file in the directory and return the file path
+        Then you can upload the file.
+        Remember that ${CURDIR} is necessary!! :b
+        """
+
+        path_sep=os.sep
+        credit_file=filepath+path_sep+'credit.html'
+        #print credit_file
+        lines = open(credit_file, "rb").readlines()
+        tmp=lines[0].strip()
+        cust_name = re.compile('id="custName" type="hidden" value="(.*?)"/>').findall(tmp)[0]
+        #print cust_name
+        tmp=lines[1].strip()
+        cust_id = re.compile('id="custId" type="hidden" value="(.*?)"/>').findall(tmp)[0]
+        #print cust_id
+        tmp=lines[2].strip()
+        credit_id = re.compile('id="credit_id" type="hidden" value="(.*?)"/>').findall(tmp)[0]
+        #print credit_id
+        new_creditid=datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        new_creditid+=str(datetime.datetime.now().microsecond)
+        new_creditid+=str(random.randint(10,99))
+        #Get Customer Name And ID in the Credit File
+        new_id=new_id.encode("GBK")
+        new_name=new_name.encode("GBK")
+        #Convert it into GBK code
+        streamWriter = codecs.lookup('utf-8')[-1]
+        sys.stdout=open(credit_file,"r")
+        sys.stdout = streamWriter(sys.stdout)
+        content=sys.stdout.read().replace(cust_name,new_name).replace(cust_id,new_id).replace(credit_id,new_creditid)
+        f = open(credit_file,'w')
+        f.write(content)
+        #Replace the Name and ID 
+        f.close()
+        sys.stdout.close()
+        return credit_file
 
 if __name__ == "__main__":
     #这是一个测试用的脚本，可以直接运行该文件验证新增的函数
+    #这部分的代码严禁删除
     #u=_ElementKeywords().Unicode()
     #print u
     #x=_ElementKeywords()._GB2312()
@@ -289,4 +344,6 @@ if __name__ == "__main__":
     print 'd:'+d
     e=_ElementKeywords().gen_chars(6)
     print 'e:'+e"""
+
+
 

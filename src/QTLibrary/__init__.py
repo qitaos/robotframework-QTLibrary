@@ -1,12 +1,15 @@
 # -*- coding: cp936 -*-
+import os
 from keywords import *
 
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+execfile(os.path.join(THIS_DIR, 'version.py'))
+
+__version__ = VERSION
 
 from robot.variables import GLOBAL_VARIABLES
 from robot import utils
 from datetime import date
-
-__version__ = '0.1'
 
 class QTLibrary( _ElementKeywords ):
 

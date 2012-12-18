@@ -1,0 +1,1 @@
+用CMD进入本目录，然后输入 python setup.py install 并运行
