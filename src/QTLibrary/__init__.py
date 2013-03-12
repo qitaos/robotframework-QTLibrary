@@ -11,7 +11,14 @@ from robot.variables import GLOBAL_VARIABLES
 from robot import utils
 from datetime import date
 
-class QTLibrary( _ElementKeywords ):
+class QTLibrary(
+    _ElementKeywords,
+    _LoggingKeywords,
+    _RunOnFailureKeywords,
+):
+    """QTLibrary is a customer library.
+        
+    """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
