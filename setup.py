@@ -58,6 +58,7 @@ setup(name         = 'robotframework-qtlibrary',
 						 ],
       py_modules=['ez_setup'],
       package_dir  = {'' : 'src'},
-      packages     = ['QTLibrary','QTLibrary.keywords']
+      packages     = ['QTLibrary','QTLibrary.keywords'],
+      include_package_data = True,
       )
 
