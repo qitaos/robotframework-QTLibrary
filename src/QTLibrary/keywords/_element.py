@@ -1,4 +1,3 @@
-# -*- coding: cp936 -*-
 #encoding=utf-8
 
 import datetime
