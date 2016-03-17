@@ -12,12 +12,6 @@ import string
 import codecs
 from keywordgroup import KeywordGroup
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-"""try:
-    import subprocess
-except ImportError:
-    subprocess = None  # subprocess not available on Python/Jython < 2.5"""
 
 class _ElementKeywords(KeywordGroup):
 
@@ -80,15 +74,15 @@ class _ElementKeywords(KeywordGroup):
         return s
 
     def gen_idcard(self, idcard='', maxAge=55, minAge=21):
-        """Get idcard No.
+        """随机生成身份证号.
         Example:
         | @{a}= | gen idcard | 123 |
-        It will return random idcard.
-        like '111110198101010231','111110198402010231'.
-        If the lenth of idcard in (15,17,18),
-            it will return 18-idcard No
-        Else
-            it will return random 18-idcard No (21<age<55)
+        关键字返回值是一个随机的身份证号，根据你的输入参数不同，返回结果也略不同.
+        例如： '111110198101010231','111110198402010231'.
+        如果你给定了一个身份号，并且长度是(15,17,18)位的,
+            会返回一个正确格式的18位身份证号（可以用来格式化成正确身份证号）
+        否则
+            会返回一个随机的18身份证号(21<年龄<55)
         """
         idlen = len(idcard)
         ic = str(idcard)
@@ -121,7 +115,7 @@ class _ElementKeywords(KeywordGroup):
         return ic
 
     def gen_name(self, num=3):
-        """gen_name gen chinese name.
+        """随机生成中文姓名，参数是字数.
         Example:
         | @{a}= | gen name | 3 |
         It will return chinese name.
@@ -137,10 +131,10 @@ class _ElementKeywords(KeywordGroup):
 
     #定义验证函数
     def verify_idcard(self, idcard):
-        """verify 18-idcard.
+        """验证身份证号是否正确.
         Example:
         | @{a}= | verify idcard | 111110198101010231 |
-        It will return true or false for the idcard.
+        返回值为: true or false , 表示身份证号验证正确与否.
         """
         #print idcard
         #权重数组
