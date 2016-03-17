@@ -1,0 +1,16 @@
+Metadata-Version: 1.1
+Name: robotframework-qtlibrary
+Version: 1.0.0
+Summary: QTLibrary for Robot Framework
+Home-page: https://github.com/qitaos/Robotframework-QTLibrary
+Author: Qitao
+Author-email: Qitaos@gmail.com
+License: No License
+Description: QTLibrary is a web testing library for Robot Framework
+        that leverages the QTLibrary libraries.
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Testing
