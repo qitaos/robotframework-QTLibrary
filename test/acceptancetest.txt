@@ -1,0 +1,52 @@
+*** Settings ***
+Library           QTLibrary
+
+*** Test Cases ***
+counter
+    #这是个计数器，随便玩玩吧
+    ${a}    count
+    ${a}    count
+    Should Be Equal As Integers    ${a}    2
+    clear counter
+    ${a}    count
+    Should Be Equal As Integers    ${a}    1
+
+随机中文姓名
+    #随机个数中文姓名
+    ${name}    gen name
+    #随机个数中文姓名
+    ${name}    gen name    2
+
+随机生日
+    #随机生日
+    ${birth}    Gen Birthday
+    #随机生日指定年龄
+    ${birth}    Gen Birthday    20    10
+
+随机字符串
+    #生成随机字符
+    ${a}    gen chars    4
+    #参数大写U，小写L，混合M
+    ${a}    gen chars    4    U
+
+随机数字
+    #指定随机数字个数
+    ${num}    gen nums    5
+
+随机和验证身份证号
+    #随机身份证号
+    ${id1}    Gen Idcard
+    #随机身份证号格式化
+    ${id2}    Gen Idcard    111111810101123
+    #随机身份证号指定年龄
+    ${id3}    Gen Idcard    \    11    10
+    #验证身份证号
+    ${ver1}    Verify Idcard    ${id2}
+    #验证身份证号-错误
+    ${ver2}    Verify Idcard    111111198101011232
+
+不建议使用
+    #这里列的几个关键字    #不推荐使用
+    Comment    Create Pboc    name    id    filepath
+    Comment    ${org}    Gen Orgno
+    Comment    Verify Orgno    ${org}
