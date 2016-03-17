@@ -10,7 +10,7 @@ QTLibrary是一个个人学习研究时做的测试库，参考了一下Selenium
 
 >pip install robotframework-qtlibrary
 
-Install way:
+Installation :
 
 >pip install robotframework-qtlibrary
 
