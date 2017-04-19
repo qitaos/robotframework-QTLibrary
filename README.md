@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/qitaos/robotframework-QTLibrary.png?branch=master)](https://travis-ci.org/qitaos/robotframework-QTLibrary)
+[![PyPi downloads](https://img.shields.io/pypi/dm/robotframework-qtlibrary.svg)](https://pypi.python.org/pypi/robotframework-qtlibrary)
+[![Latest Version](https://img.shields.io/pypi/v/robotframework-qtlibrary.svg)](https://pypi.python.org/pypi/robotframework-qtlibrary)
+
 robotframework-QTLibrary
 ========================
 
