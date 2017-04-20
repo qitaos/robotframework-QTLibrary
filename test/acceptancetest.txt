@@ -14,36 +14,59 @@ counter
 随机中文姓名
     #随机个数中文姓名
     ${name}    gen name
+    ${len}    Get Length    ${name}
+    Should Be Equal As Integers    ${len}    3
     #随机个数中文姓名
-    ${name}    gen name    2
+    ${name}    gen name    4
+    ${len}    Get Length    ${name}
+    Should Be Equal As Integers    ${len}    4
 
 随机生日
     #随机生日
     ${birth}    Gen Birthday
     #随机生日指定年龄
     ${birth}    Gen Birthday    20    10
+    ${len}    Get Length    ${birth}
+    Should Be Equal As Integers    ${len}    8
 
 随机字符串
     #生成随机字符
-    ${a}    gen chars    4
+    ${chars}    gen chars    4
     #参数大写U，小写L，混合M
-    ${a}    gen chars    4    U
+    ${chars}    gen chars    4    U
+    ${len}    Get Length    ${chars}
+    Should Be Equal As Integers    ${len}    4
+    Should Be Equal As Strings    ${chars.upper()}    ${chars}
+    ${chars}    gen chars    4    L
+    ${len}    Get Length    ${chars}
+    Should Be Equal As Integers    ${len}    4
+    Should Be Equal As Strings    ${chars.lower()}    ${chars}
 
 随机数字
     #指定随机数字个数
     ${num}    gen nums    5
+    ${len}    Get Length    ${num}
+    Should Be Equal As Integers    ${len}    5
 
 随机和验证身份证号
     #随机身份证号
     ${id1}    Gen Idcard
+    ${len}    Get Length    ${id1}
+    Should Be Equal As Integers    ${len}    18
     #随机身份证号格式化
     ${id2}    Gen Idcard    111111810101123
+    ${len}    Get Length    ${id2}
+    Should Be Equal As Integers    ${len}    18
     #随机身份证号指定年龄
-    ${id3}    Gen Idcard    \    11    10
+    ${id3}    Gen Idcard    ${EMPTY}    11    10
+    ${len}    Get Length    ${id3}
+    Should Be Equal As Integers    ${len}    18
     #验证身份证号
     ${ver1}    Verify Idcard    ${id2}
+    Should Be True    ${ver1}
     #验证身份证号-错误
     ${ver2}    Verify Idcard    111111198101011232
+    Should Not Be True    ${ver2}
 
 不建议使用
     #这里列的几个关键字    #不推荐使用
