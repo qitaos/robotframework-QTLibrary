@@ -1,9 +1,9 @@
 #encoding=utf-8
 import os
-from keywords import *
+from .keywords import *
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-execfile(os.path.join(THIS_DIR, 'version.py'))
+exec(compile(open(os.path.join(THIS_DIR, 'version.py')).read(), os.path.join(THIS_DIR, 'version.py'), 'exec'))
 
 __version__ = VERSION
 
