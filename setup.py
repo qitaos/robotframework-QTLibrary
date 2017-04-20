@@ -5,8 +5,11 @@ from os.path import abspath, dirname, join
 from setuptools import setup
 
 CURDIR = dirname(abspath(__file__))
-
-execfile(join(CURDIR, 'src', 'QTLibrary', 'version.py'))
+version_file = join(CURDIR, 'src', 'QTLibrary', 'version.py')
+try:
+    execfile(version_file)
+except NameError:
+    exec(compile(open(version_file).read(), version_file, 'exec'))
 
 DESCRIPTION = """
 QTLibrary is a web testing library for Robot Framework

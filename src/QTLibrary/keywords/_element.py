@@ -147,7 +147,7 @@ class _ElementKeywords(KeywordGroup):
             pass
         else:
             #不是合法的身份证号码，直接退出
-            msg = '不是合法的身份证号码'.decode('utf-8')
+            msg = self._to_unicode('不是合法的身份证号码')
             self._warn(msg + ':' + idcard)
             return msg
 
@@ -173,7 +173,7 @@ class _ElementKeywords(KeywordGroup):
         else:
             orglen = 9
         if lens != orglen:
-            msg = '不是合法的组织机构代码'.decode('utf-8')
+            msg = self._to_unicode('不是合法的组织机构代码')
             self._warn(msg + ':' + orgno)
             return msg
         last = orgno[-1]
@@ -245,6 +245,20 @@ class _ElementKeywords(KeywordGroup):
 
     # Private
 
+    def _to_unicode(self, unicode_or_str):
+
+        if isinstance(unicode_or_str, str):
+            try:
+                value = unicode_or_str.decode('utf-8')
+            except:
+                value = unicode_or_str.encode('utf-8')
+        elif isinstance(unicode_or_str, bytes):
+            value = unicode_or_str.decode('utf-8')
+        else:
+            value = unicode_or_str
+
+        return value
+
     def _gen_nums(self, counts):
         li = string.digits
         s = ''
@@ -301,7 +315,7 @@ class _ElementKeywords(KeywordGroup):
         idlen = len(idcard)
         ic = str(idcard)
         if idlen != 17:
-            msg = '不是合法的身份证号码: '.decode('utf-8')
+            msg = self._to_unicode('不是合法的身份证号码: ')
             self._warn(msg + idcard)
             return
             #print ic
@@ -416,7 +430,7 @@ class _ElementKeywords(KeywordGroup):
         ln = len(li_name)
         last_name = li_name[random.randint(0, ln - 1)]
         self._debug('gen last_name: %s' % last_name)
-        return last_name.decode('utf-8')
+        return self._to_unicode(last_name)
     
     #@随机生成汉字
     def _GB2312(self):
