@@ -6,7 +6,7 @@ sys.path.append(join(dirname(__file__), 'src'))
 from ez_setup import use_setuptools
 use_setuptools()
 from setuptools import setup
-execfile(join(dirname(__file__), 'src', 'QTLibrary', 'version.py'))
+exec(compile(open(join(dirname(__file__), 'src', 'QTLibrary', 'version.py')).read(), join(dirname(__file__), 'src', 'QTLibrary', 'version.py'), 'exec'))
 
 DESCRIPTION = """
 QTLibrary is a web testing library for Robot Framework
