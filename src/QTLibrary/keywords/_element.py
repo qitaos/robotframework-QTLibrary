@@ -122,11 +122,11 @@ class _ElementKeywords(KeywordGroup):
         """
         cust_name = self._gen_name()
         
-        for n in range(0, int(num) - len(cust_name)):
-            cust_name += self._GB2312()
+        for n in range(0, int(num) - len(cust_name.decode('utf-8'))):
+            cust_name += self._to_unicode(self._GB2312())
             #print cust_name
         self._info('gen chinese name: %s' % cust_name)
-        return cust_name
+        return cust_name.decode('utf-8')
 
     #定义验证函数
     def verify_idcard(self, idcard):
@@ -436,19 +436,14 @@ class _ElementKeywords(KeywordGroup):
     def _GB2312(self):
 
         str1 = self._hex()
-        #print 'str1:'+str1
-        #print str1.decode('hex')
         try:
-            str2 = str1.decode('hex').decode('gb2312')
+            str2 = str1.decode('hex').decode('gb18030')
         except UnicodeDecodeError:
             #出现错误的时候重新生成一个汉字
-            str1 = self._hex()
-            try:
-                str2 = str1.decode('hex').decode('gb2312')
-                #print '22222' + str2
-            except UnicodeDecodeError:
-                #万一RP很差还是报错，那就指定一个汉字算了
-                str2 = '安'
+            str2 = self._GB2312()
+        except:
+            print (bytes.fromhex(str1).decode('gb18030'))
+            str2 = bytes.fromhex(str1).decode('gb18030')
         return str2
 
     def _hex(self):

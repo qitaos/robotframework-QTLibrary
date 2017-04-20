@@ -1,4 +1,5 @@
 *** Settings ***
+Suite Setup       Set Log Level    TRACE
 Library           QTLibrary
 
 *** Test Cases ***
