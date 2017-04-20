@@ -30,7 +30,8 @@ setup(name         = 'robotframework-qtlibrary',
                         "Topic :: Software Development :: Testing"
                      ],
       install_requires = [
-			'robotframework',				
+			'robotframework',
+                        'decorator',
 						 ],
       py_modules=['ez_setup'],
       package_dir  = {'' : 'src'},
