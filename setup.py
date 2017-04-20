@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 
-import sys
-from os.path import join, dirname
-sys.path.append(join(dirname(__file__), 'src'))
-from ez_setup import use_setuptools
-use_setuptools()
+from os.path import abspath, dirname, join
+
 from setuptools import setup
-exec(compile(open(join(dirname(__file__), 'src', 'QTLibrary', 'version.py')).read(), join(dirname(__file__), 'src', 'QTLibrary', 'version.py'), 'exec'))
+
+CURDIR = dirname(abspath(__file__))
+
+execfile(join(CURDIR, 'src', 'QTLibrary', 'version.py'))
 
 DESCRIPTION = """
 QTLibrary is a web testing library for Robot Framework
 that leverages the QTLibrary libraries.
 """[1:-1]
 
+with open(join(CURDIR, 'requirements.txt')) as f:
+    REQUIREMENTS = f.read().splitlines()
+    
 setup(name         = 'robotframework-qtlibrary',
       version      = VERSION,
       description  = 'QTLibrary for Robot Framework',
@@ -20,7 +23,8 @@ setup(name         = 'robotframework-qtlibrary',
       author       = 'Qitao',
       author_email = 'Qitaos@gmail.com',
       url          = 'https://github.com/qitaos/Robotframework-QTLibrary',
-      license      = 'No License',
+      license      = 'Apache License 2.0',
+      keywords     = 'robotframework qtlibrary',
       platforms    = 'any',
       classifiers  = [
                         "Development Status :: 5 - Production/Stable",
@@ -29,11 +33,7 @@ setup(name         = 'robotframework-qtlibrary',
                         "Programming Language :: Python",
                         "Topic :: Software Development :: Testing"
                      ],
-      install_requires = [
-			'robotframework',
-                        'decorator',
-						 ],
-      py_modules=['ez_setup'],
+      install_requires = REQUIREMENTS,
       package_dir  = {'' : 'src'},
       packages     = ['QTLibrary','QTLibrary.keywords'],
       include_package_data = True,
