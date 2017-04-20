@@ -10,7 +10,7 @@ if sys.platform == 'cli':
 def _run_on_failure_decorator(method, *args, **kwargs):
     try:
         return method(*args, **kwargs)
-    except Exception, err:
+    except Exception as err:
         self = args[0]
         if hasattr(self, '_run_on_failure'):
             self._run_on_failure()
@@ -19,10 +19,10 @@ def _run_on_failure_decorator(method, *args, **kwargs):
 class KeywordGroupMetaClass(type):
     def __new__(cls, clsname, bases, dict):
         if decorator:
-            for name, method in dict.items():
+            for name, method in list(dict.items()):
                 if not name.startswith('_') and inspect.isroutine(method):
                     dict[name] = decorator(_run_on_failure_decorator, method)
         return type.__new__(cls, clsname, bases, dict)
 
-class KeywordGroup(object):
-    __metaclass__ = KeywordGroupMetaClass
+class KeywordGroup(object, metaclass=KeywordGroupMetaClass):
+    pass
