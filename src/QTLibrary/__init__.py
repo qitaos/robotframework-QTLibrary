@@ -22,7 +22,8 @@ class QTLibrary(
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
 
-    def __init__(self):
+    def __init__(self,
+                 run_on_failure=''):
         """QTLibrary can be imported. By Jacky Qi 
         """
         for base in QTLibrary.__bases__:

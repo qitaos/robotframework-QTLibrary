@@ -121,12 +121,18 @@ class _ElementKeywords(KeywordGroup):
         It will return chinese name.
         """
         cust_name = self._gen_name()
-        
-        for n in range(0, int(num) - len(cust_name.decode('utf-8'))):
+        if sys.version_info >= (3,3):
+            len_name = len(cust_name.decode('utf-8'))
+        else:
+            len_name = len(cust_name)
+        for n in range(0, int(num) - len_name):
             cust_name += self._to_unicode(self._GB2312())
             #print cust_name
         self._info('gen chinese name: %s' % cust_name)
-        return cust_name.decode('utf-8')
+        if sys.version_info >= (3,3):
+            cust_name = cust_name.decode('utf-8')
+        
+        return cust_name
 
     #定义验证函数
     def verify_idcard(self, idcard):
@@ -442,7 +448,7 @@ class _ElementKeywords(KeywordGroup):
             #出现错误的时候重新生成一个汉字
             str2 = self._GB2312()
         except:
-            print (bytes.fromhex(str1).decode('gb18030'))
+            #print (bytes.fromhex(str1).decode('gb18030'))
             str2 = bytes.fromhex(str1).decode('gb18030')
         return str2
 
