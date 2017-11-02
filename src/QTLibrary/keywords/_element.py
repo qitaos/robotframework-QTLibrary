@@ -8,6 +8,7 @@ import os
 #import socket
 #import urlparse
 import random
+from random import choice
 import string
 import codecs
 from .keywordgroup import KeywordGroup
@@ -84,6 +85,40 @@ class _ElementKeywords(KeywordGroup):
         否则
             会返回一个随机的18身份证号(21<年龄<55)
         """
+        province= {
+        '11':'北京市',
+        '12':'天津市',
+        '13':'河北省',
+        '14':'山西省',
+        '15':'内蒙古',
+        '21':'辽宁省',
+        '22':'吉林省',
+        '23':'黑龙江省',
+        '31':'上海市',
+        '32':'江苏省',
+        '33':'浙江省',
+        '34':'安徽省',
+        '35':'福建省',
+        '36':'江西省',
+        '37':'山东省',
+        '41':'河南省',
+        '42':'湖北省',
+        '43':'湖南省',
+        '44':'广东省',
+        '45':'广西省',
+        '46':'海南省',
+        '50':'重庆市',
+        '51':'四川省',
+        '52':'贵州省',
+        '53':'云南省',
+        '54':'西藏自治区',
+        '61':'陕西省',
+        '62':'甘肃省',
+        '63':'青海省',
+        '64':'宁夏回族自治区',
+        '65':'新疆'
+        }
+
         idlen = len(idcard)
         ic = str(idcard)
         if idlen == 17:
@@ -93,7 +128,7 @@ class _ElementKeywords(KeywordGroup):
         elif idlen == 18:
             pass
         else:
-            ic = str(random.randint(1, 9)) + self._gen_nums(5) + self._gen_birthday(int(maxAge),
+            ic = choice(province.keys()) + self._gen_nums(4) + self._gen_birthday(int(maxAge),
                  int(minAge)) + self._gen_nums(3)
             #print ic
         ic = ic[0:17]
@@ -269,7 +304,7 @@ class _ElementKeywords(KeywordGroup):
         li = string.digits
         s = ''
         for n in range(0, int(counts)):
-            s += li[random.randint(0, len(li) - 1)]
+            s += choice(li)
         return s
 
     def _gen_chars(self, counts, upper='M'):
@@ -290,7 +325,7 @@ class _ElementKeywords(KeywordGroup):
             self._warn('wrong upper: %s' % upper.upper())
             return
         for n in range(0, int(counts)):
-            s += li[random.randint(0, lenli - 1)]
+            s += choice(li)
         return s
 
     def _gen_birthday(self, maxAge=55, minAge=21, sep=''):
@@ -307,11 +342,11 @@ class _ElementKeywords(KeywordGroup):
         #print 'age'+str(age)
         y = str(birth - random.randint(1, age))
         #print 'y'+str(y)
-        index1 = random.randint(0, 11)
+        #index1 = random.randint(0, 11)
         #print 'index1:'+str(index1)
-        m = str(mon[index1])
+        m = choice(mon)
         m = m.zfill(2)
-        maxDay = int(mon_days[index1])
+        maxDay = int(mon_days[int(m)-1])
         d = str(random.randint(1, maxDay))
         d = d.zfill(2)
         s = y + sep + m + sep + d
@@ -433,8 +468,8 @@ class _ElementKeywords(KeywordGroup):
 '鄢','涂','钦','段','干','百里','东郭','南门','呼延','归海','羊舌','微生',
 '岳','帅','缑亢','况','后','有琴','梁','丘','左丘','东门','西门','商',
 '牟','佘','佴伯','赏','南宫','墨哈','谯笪','年','爱','阳','佟']
-        ln = len(li_name)
-        last_name = li_name[random.randint(0, ln - 1)]
+        #ln = len(li_name)
+        last_name = choice(li_name)
         self._debug('gen last_name: %s' % last_name)
         return self._to_unicode(last_name)
     
